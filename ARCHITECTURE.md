@@ -176,3 +176,58 @@ class BackendInterface {
 ## Demo Backend
 
 The demo backend is a simple implementation of the backend interface that uses localStorage to store user data. It includes a mini library to override the `fetch` function and capture and respond to fetch requests to simulate API responses. Here's an example code snippet for the demo backend:
+
+## File Structure
+
+your-library/
+├── dist/
+│   ├── your-library.js
+│   └── your-library.min.js
+├── src/
+│   ├── index.js
+│   ├── auth/
+│   │   ├── auth.js
+│   │   ├── providers/
+│   │   │   ├── email.js
+│   │   │   ├── facebook.js
+│   │   │   └── google.js
+│   │   └── utils/
+│   │       ├── email-verification.js
+│   │       ├── password-reset.js
+│   │       └── user-roles.js
+│   └── ui/
+│       ├── ui.js
+│       ├── components/
+│       │   ├── login-form.js
+│       │   ├── registration-form.js
+│       │   └── user-menu.js
+│       └── utils/
+│           └── dom-helpers.js
+├── tests/
+│   ├── auth/
+│   │   ├── auth.test.js
+│   │   ├── providers/
+│   │   │   ├── email.test.js
+│   │   │   ├── facebook.test.js
+│   │   │   └── google.test.js
+│   │   └── utils/
+│   │       ├── email-verification.test.js
+│   │       ├── password-reset.test.js
+│   │       └── user-roles.test.js
+│   └── ui/
+│       ├── ui.test.js
+│       ├── components/
+│       │   ├── login-form.test.js
+│       │   ├── registration-form.test.js
+│       │   └── user-menu.test.js
+│       └── utils/
+│           └── dom-helpers.test.js
+├── examples/
+│   └── index.html
+├── node_modules/
+│   └── ...
+├── .eslintrc.js
+├── .gitignore
+├── package.json
+├── README.md
+└── webpack.config.js
