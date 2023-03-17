@@ -178,7 +178,7 @@ class BackendInterface {
 The demo backend is a simple implementation of the backend interface that uses localStorage to store user data. It includes a mini library to override the `fetch` function and capture and respond to fetch requests to simulate API responses. Here's an example code snippet for the demo backend:
 
 ## File Structure
-
+<code>
 your-library/
 ├── dist/
 │   ├── your-library.js
@@ -231,3 +231,4 @@ your-library/
 ├── package.json
 ├── README.md
 └── webpack.config.js
+</code>
