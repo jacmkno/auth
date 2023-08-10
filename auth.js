@@ -1,7 +1,7 @@
 (()=>{
     if(location.hash != '#auth') return;
 
-    (async link => {
+    (link => {
         console.log('XXXX:', link);
         link.rel = 'stylesheet';
         var urlObj = new URL(document.currentScript.src);
@@ -16,5 +16,7 @@
         console.log('ZZZZ:', C);
         C.className = 'auth';
         C.innerText = 'Session tools...';
-    })(document.createElement('nav')).then(c => document.body.appendChild(c));
+        document.body.appendChild(C);
+    })(document.createElement('nav'))
+
 })();
