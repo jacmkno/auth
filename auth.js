@@ -2,7 +2,6 @@
     if(location.hash != '#auth') return;
 
     (link => {
-        console.log('XXXX:', link);
         link.rel = 'stylesheet';
         var urlObj = new URL(document.currentScript.src);
         urlObj.pathname = urlObj.pathname.substring(0, urlObj.pathname.lastIndexOf('/') + 1) + 'auth.css'; // Replace 'yourfile.ext' with your filename
@@ -13,9 +12,15 @@
     })(document.createElement('link'));
 
     (async C => {
-        console.log('ZZZZ:', C);
+        /* Target is a wordpress site served to multiple domains
+           including a map from the session domain to target website.
+        */
         C.className = 'auth';
-        C.innerText = 'Session tools...';
+        C.innerHTML = `<div class="auth">
+            <a href="https://access.activisual.net/wp-login.php?site=${location.hostname}">Login</a>
+            <a href="https://access.activisual.net/wp-login.php?action=register&site=${location.hostname}">Register</a>
+        </div>`;
+
         document.body.appendChild(C);
     })(document.createElement('nav'))
 
