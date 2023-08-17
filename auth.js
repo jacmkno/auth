@@ -17,8 +17,7 @@
         */
         C.className = 'auth';
         C.innerHTML = `<div class="auth">
-            <a href="https://access.activisual.net/wp-login.php?site=${location.hostname}">Login</a>
-            <a href="https://access.activisual.net/wp-login.php?action=register&site=${location.hostname}">Register</a>
+            <a href="${window.AUTH_BACKEND}?site=${location.hostname}">Login / Register</a>
         </div>`;
 
         document.body.appendChild(C);
