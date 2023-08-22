@@ -1,5 +1,15 @@
 (()=>{
+    const BACKEND_ORIGIN = new URL(window.AUTH_BACKEND).origin;
     if(location.hash != '#auth') return;
+
+    function setToken(token){
+        // TODO: Encrypt it with a fixed obscured key.
+        localStorage.uid  = token;
+    }
+
+    function getToken(){
+        return localStorage.uid;
+    }
 
     (link => {
         link.rel = 'stylesheet';
@@ -22,5 +32,19 @@
 
         document.body.appendChild(C);
     })(document.createElement('nav'))
+
+    const initToken = new URLSearchParams(window.location.search).get('auth');
+    if(initToken){
+		await fetch(
+			`${BACKEND_ORIGIN}/wp-json/external_session/v1/init/${location.hostname}`,
+			{headers: {
+				'Authorization': initToken,
+				'Content-Type': 'application/json'
+			}}
+		).then(r=>r.json()).then(d=>{
+            setToken(d.token);
+        });
+    }
+
 
 })();
