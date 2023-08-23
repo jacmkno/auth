@@ -38,7 +38,7 @@
         var url = new URL(window.location.href);
         url.searchParams.delete('auth');
         history.pushState(null, null, url.toString());
-		await fetch(
+		fetch(
 			`${BACKEND_ORIGIN}/wp-json/external_session/v1/init/${location.hostname}`,
 			{headers: {
 				'Authorization': initToken,
