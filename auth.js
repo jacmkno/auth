@@ -35,6 +35,9 @@
 
     const initToken = new URLSearchParams(window.location.search).get('auth');
     if(initToken){
+        var url = new URL(window.location.href);
+        url.searchParams.delete('auth');
+        history.pushState(null, null, url.toString());
 		await fetch(
 			`${BACKEND_ORIGIN}/wp-json/external_session/v1/init/${location.hostname}`,
 			{headers: {
