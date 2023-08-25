@@ -1,8 +1,8 @@
 (()=>{
+    if(location.hash != '#auth') return;
+    
     const BACKEND_ORIGIN = new URL(window.AUTH_BACKEND).origin;
     const BACKEND_HOST = new URL(window.AUTH_BACKEND).hostname;
-
-    if(location.hash != '#auth') return;
 
     function renderSessionBar(passOnValue){
         const token = getToken();
