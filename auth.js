@@ -107,13 +107,17 @@
                 await setSession({});
                 return false;
             }
+            
             const session = await getSession();
             if(!session.uid) return false;
 
             if(profile){
-                return r.json().then(async r => setSession({
-                    profile: r, ...session
-                }));
+                return r.json().then(async profileData => {
+                    localStorage.setItem(BACKEND_HOST, JSON.stringify({
+                        ...session, profile:profileData
+                    }));
+                    return profileData;
+                });
             }else if(!session.profile){
                 return !!isSessionActive(true);
             }else{
