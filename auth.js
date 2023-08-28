@@ -88,23 +88,37 @@
         return session;
     }
 
-    async function isSessionActive(){
+    async function isSessionActive(profile=false){
         const currentToken = getToken();
         if(!currentToken) {
             renderSessionBar();
             return false;
         }
 		return fetch(
-			`${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}?check=1`,
+			`${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}?${profile?'profile':'check'}=1`,
 			{headers: {
 				'Authorization': currentToken,
 				'Content-Type': 'application/json'
 			}}
 		)
-        .then(r=>r.status == 200)
-        .then(ok => {
-            if(!ok) setSession({});
-            return ok;
+        .then(async r => {
+            const ok = r.status == 200;
+            if(!ok) {
+                await setSession({});
+                return false;
+            }
+            const session = await getSession();
+            if(!session.uid) return false;
+
+            if(profile){
+                return r.json().then(async r => setSession({
+                    profile: r, ...session
+                }));
+            }else if(!session.profile){
+                return !!isSessionActive(true);
+            }else{
+                return true;
+            }
         })
         .then(renderSessionBar);
     }
@@ -138,6 +152,8 @@
     }
 
     window.AUTH = {
+        getToken,
+        isSessionActive,
         getSession,
         setSession
     };
