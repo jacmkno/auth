@@ -31,13 +31,13 @@
     }
 
     async function getSession(forceRefresh=false){
-        const session = ()=>{
+        const session = (()=>{
             try{
                 return JSON.parse(localStorage.getItem(BACKEND_HOST));
             }catch{
                 return {};
             }
-        }
+        })();
         if(session.uid && !session.data){
             return setSession(session);
         }else if(!session.uid){
