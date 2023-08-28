@@ -52,7 +52,7 @@
             return fetch(
                 `${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}`,
                 {
-                    method: 'POST',
+                    method: 'PUT',
                     headers: {
                         'Authorization': session.uid,
                         'Content-Type': 'application/json'
