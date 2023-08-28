@@ -57,7 +57,7 @@
                         'Authorization': session.uid,
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(data),
+                    body: JSON.stringify(session.data),
                 }
             )
             .then(r => [r.json(), r])
