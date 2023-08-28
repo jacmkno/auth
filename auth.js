@@ -5,15 +5,22 @@
     const BACKEND_HOST = new URL(window.AUTH_BACKEND).hostname;
 
     function renderSessionBar(passOnValue){
-        const token = getToken();
+        const session = (()=>{
+            try{
+                return JSON.parse(localStorage.getItem(BACKEND_HOST));
+            }catch{
+                return {};
+            }
+        })();
+
         (async C => {
             /* Target is a wordpress site served to multiple domains
                including a map from the session domain to target website.
             */
             C.className = 'auth';
             C.innerHTML = `<div class="auth">${
-                token
-                    ? `<a href="${window.AUTH_BACKEND}/customer-logout?site=${location.hostname}">Logout</a>`
+                session.profile
+                    ? `<a href="${window.AUTH_BACKEND}?site=${location.hostname}">${session.profile.display_name}</a> | <a href="${window.AUTH_BACKEND}/customer-logout?site=${location.hostname}">Logout</a>`
                     : `<a href="${window.AUTH_BACKEND}?site=${location.hostname}">Login / Register</a>`
             }</div>`;
     
