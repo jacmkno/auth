@@ -23,7 +23,11 @@
     }
 
     function getToken(){
-        return getSession().uid;
+        try{
+            return JSON.parse(localStorage.getItem(BACKEND_HOST)).uid;
+        }catch{
+            return null;
+        }
     }
 
     async function getSession(forceRefresh=false){
@@ -36,6 +40,8 @@
         }
         if(session.uid && !session.data){
             return setSession(session);
+        }else if(!session.uid){
+            return setSession({});
         }
         return session;
     }
