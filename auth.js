@@ -84,7 +84,10 @@
 
     async function isSessionActive(){
         const currentToken = getToken();
-        if(!currentToken) return false;
+        if(!currentToken) {
+            renderSessionBar();
+            return false;
+        }
 		return fetch(
 			`${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}?check=1`,
 			{headers: {
