@@ -165,7 +165,7 @@
         var url = new URL(window.location.href);
         url.searchParams.delete('auth');
         history.pushState(null, null, url.toString());
-		fetch(
+		await fetch(
 			`${BACKEND_ORIGIN}/wp-json/external_session/v1/init/${location.hostname}`,
 			{headers: {
 				'Authorization': initToken,
@@ -174,9 +174,8 @@
 		)
         .then(r=>r.json())
         .then(d=>setSession({uid: d.token}));
-    }else{
-        isSessionActive();
     }
+    isSessionActive();
 
     window.AUTH = {
         getToken,
