@@ -98,7 +98,7 @@
                 delete session.uid;
             });
             localStorage.setItem(BACKEND_HOST, JSON.stringify(session));
-            renderSessionBar();            
+            if(session.profile) renderSessionBar();            
         }
         return session;
     }
