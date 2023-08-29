@@ -37,7 +37,7 @@
             }</div>`;
     
             document.body.appendChild(C);
-        })(document.createElement('nav'));
+        })(document.querySelector('nav.auth') || document.createElement('nav'));
         return passOnValue;    
     }
 
