@@ -9,7 +9,7 @@
         In this case the access site should only allow being used as an IFRAME on the designated URL for getting an init temporary token or possible a real token directly if it is not going to be passed through any autologged channels.
  */
 
-(()=>{
+(async ()=>{
     if(location.hash != '#auth') return;
     
     const BACKEND_ORIGIN = new URL(window.AUTH_BACKEND).origin;
@@ -155,7 +155,12 @@
         document.head.appendChild(link);
     })(document.createElement('link'));
 
-    const initToken = new URLSearchParams(window.location.search).get('auth');
+    const initToken = await (async () => {
+        let rt = new URLSearchParams(window.location.search).get('auth');
+        if(!rt) rt = await openIframeAndWaitForMessage(`${BACKEND_ORIGIN}/external_session/autologin?site=${location.hostname}`);
+        return rt;
+    })();
+    
     if(initToken){
         var url = new URL(window.location.href);
         url.searchParams.delete('auth');
@@ -180,3 +185,66 @@
         setSession
     };
 })();
+
+
+function openIframeAndWaitForMessage(url) {
+    return new Promise((resolve, reject) => {
+      // Create the iframe element
+      const iframe = document.createElement('iframe');
+      iframe.src = url;
+      iframe.id = 'myIframe';
+      iframe.style.display = 'none'; // Hide the iframe
+  
+      // Append the iframe to the document body
+      document.body.appendChild(iframe);
+  
+      // Function to handle the message event
+      const messageHandler = (event) => {
+        if (event.source !== iframe.contentWindow) {
+            return;
+        }  
+        // Resolve the promise with the received message
+        if(event.data.length){
+            resolve(event.data);
+        }else{
+            reject(false);
+        }
+
+  
+        // Remove the iframe
+        document.body.removeChild(iframe);
+  
+        // Remove the message event listener
+        window.removeEventListener('message', messageHandler);
+      };
+  
+      // Add the message event listener
+      window.addEventListener('message', messageHandler);
+  
+      // Set a timeout to remove the iframe after 5 seconds
+      setTimeout(() => {
+        // Reject the promise if it hasn't been resolved yet
+        reject(false);
+  
+        // Remove the iframe
+        try{
+            document.body.removeChild(iframe);
+        }catch(e){}
+  
+        try{
+            // Remove the message event listener
+            window.removeEventListener('message', messageHandler);
+        }catch(e){}
+      }, 5000);
+    });
+  }
+  
+  // Usage
+  openIframeAndWaitForMessage('hhttps://access.activisual.net/external_session/autologin?site=colombialicita.com')
+    .then((message) => {
+      console.log('Received message:', message);
+    })
+    .catch((error) => {
+      console.log('Error:', error);
+    });
+  
