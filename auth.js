@@ -11,6 +11,7 @@
 
 (async ()=>{
     if(location.hash != '#auth') return;
+    let TOKEN = null;
     
     const BACKEND_ORIGIN = new URL(window.AUTH_BACKEND).origin;
     const BACKEND_HOST = new URL(window.AUTH_BACKEND).hostname;
@@ -41,11 +42,7 @@
     }
 
     function getToken(){
-        try{
-            return JSON.parse(localStorage.getItem(BACKEND_HOST)).uid;
-        }catch{
-            return null;
-        }
+        return TOKEN;
     }
 
     async function getSession(forceRefresh=false){
@@ -72,7 +69,7 @@
                 {
                     method: 'PUT',
                     headers: {
-                        'Authorization': session.uid,
+                        'Authorization': TOKEN,
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(session.data),
@@ -88,7 +85,7 @@
             await fetch(
                 `${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}`,
                 {headers: {
-                    'Authorization': session.uid,
+                    'Authorization': TOKEN,
                     'Content-Type': 'application/json'
                 }}
             )
@@ -173,7 +170,10 @@
 			}}
 		)
         .then(r=>r.json())
-        .then(d=>setSession({uid: d.token}));
+        .then(d => {
+            TOKEN = d.token;
+            setSession({uid: true})
+        });
     }
     isSessionActive();
 
