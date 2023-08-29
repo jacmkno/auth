@@ -1,3 +1,13 @@
+/*
+  TODO: HttpOnly token.
+  1. On JS load:
+     - Check if the token is on a scoped variable, otherwise check in the session data if it is supposed to be on the client site server (if uid is set) an recover it from there if possible
+     - On session init store the token in the scoped variable and send it to the server, store a fixed string as stored token in session data.
+  2. On getToken, get the token from the scoped variable only, nothing more.
+  3. Client site server is expected to have a "session-start" end point that will claim, return the token, and store it associated to a client's site session managed through an HttpOnly cookie.
+  4. Keep this feature as an optional configuration so that we can support pure client side sites.
+ */
+
 (()=>{
     if(location.hash != '#auth') return;
     
