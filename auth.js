@@ -237,14 +237,4 @@ function openIframeAndWaitForMessage(url) {
         }catch(e){}
       }, 5000);
     });
-  }
-  
-  // Usage
-  openIframeAndWaitForMessage('hhttps://access.activisual.net/external_session/autologin?site=colombialicita.com')
-    .then((message) => {
-      console.log('Received message:', message);
-    })
-    .catch((error) => {
-      console.log('Error:', error);
-    });
-  
+}
