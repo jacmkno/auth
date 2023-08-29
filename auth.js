@@ -6,7 +6,7 @@
   2. On getToken, get the token from the scoped variable only, nothing more.
   3. Client site server is expected to have a "session-start" end point that will claim, return the token, and store it associated to a client's site session managed through an HttpOnly cookie.
   4.!!! Instead of recovering the token from the client site when if is expected to be there, first try to simply open an iframe to the backendsite and try getting an init token directly from the access site.
-        In this case the access site should only allow being used as an IFRAME on the designated URL for getting an init temporary token.
+        In this case the access site should only allow being used as an IFRAME on the designated URL for getting an init temporary token or possible a real token directly if it is not going to be passed through any autologged channels.
  */
 
 (()=>{
