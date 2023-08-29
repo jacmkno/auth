@@ -154,7 +154,7 @@
 
     const initToken = await (async () => {
         let rt = new URLSearchParams(window.location.search).get('auth');
-        if(!rt) rt = await openIframeAndWaitForMessage(`${BACKEND_ORIGIN}/external_session/autologin?site=${location.hostname}`);
+        if(!rt) rt = await openIframeAndWaitForMessage(`${BACKEND_ORIGIN}/external_session/autologin?site=${location.hostname}`).catch(e=>null);
         return rt;
     })();
     
