@@ -8,26 +8,25 @@
   4.!!! Instead of recovering the token from the client site when if is expected to be there, first try to simply open an iframe to the backendsite and try getting an init token directly from the access site.
         In this case the access site should only allow being used as an IFRAME on the designated URL for getting an init temporary token or possible a real token directly if it is not going to be passed through any autologged channels.
  */
-
 (async ()=>{
     if(location.hash != '#auth') return;
+
+    const ERRORS = Object.freeze({
+        BAD_CREDENTIALS: 1,
+        BAD_SERVER: 2
+    });
+    
     let TOKEN = null;
     
     const BACKEND_ORIGIN = new URL(window.AUTH_BACKEND).origin;
     const BACKEND_HOST = new URL(window.AUTH_BACKEND).hostname;
 
     function renderSessionBar(passOnValue){
-        const session = (()=>{
-            try{
-                return JSON.parse(localStorage.getItem(BACKEND_HOST));
-            }catch{
-                return {};
-            }
-        })();
+        const session = getLocalSession();
 
         (async C => {
             /* Target is a wordpress site served to multiple domains
-               including a map from the session domain to target website.
+                including a map from the session domain to target website.
             */
             C.className = 'auth';
             C.innerHTML = `<div class="auth">${
@@ -40,107 +39,130 @@
         })(document.querySelector('nav.auth') || document.createElement('nav'));
         return passOnValue;    
     }
-
-    function getToken(){
-        return TOKEN;
-    }
-
-    async function getSession(forceRefresh=false){
-        const session = (()=>{
-            try{
-                return JSON.parse(localStorage.getItem(BACKEND_HOST));
-            }catch{
-                return {};
-            }
-        })();
-        if(session.uid && !session.data){
-            return setSession(session);
-        }else if(!session.uid){
-            return setSession({});
+    function getLocalSession(){
+        try{
+            return JSON.parse(localStorage.getItem(BACKEND_HOST));
+        }catch{
+            return {};
         }
-        return session;
     }
 
-    async function setSession(session){
+    function setLocalSession(session){
         localStorage.setItem(BACKEND_HOST, JSON.stringify(session));
-        if(session.uid && session.data){
-            return fetch(
-                `${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}`,
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': TOKEN,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(session.data),
-                }
-            )
-            .then(r => [r.json(), r])
-            .then(([data, r]) =>
-                r.status == 200
-                    ? session
-                    : (()=>{ throw {message: "Failed to save", response: r}; })()
-            );
-        }else if(session.uid){
-            await fetch(
-                `${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}`,
-                {headers: {
-                    'Authorization': TOKEN,
-                    'Content-Type': 'application/json'
-                }}
-            )
-            .then(r => [r.json(), r.status])
-            .then(([d, status]) =>
-                status == 200
-                    ? session.data = d
-                    : (()=>{ throw r; })()
-            ).catch(e => {
-                delete session.uid;
-            });
-            localStorage.setItem(BACKEND_HOST, JSON.stringify(session));
-            if(session.profile) renderSessionBar();            
-        }
-        return session;
     }
 
-    async function isSessionActive(profile=false){
-        const currentToken = getToken();
-        if(!currentToken) {
-            renderSessionBar();
-            return false;
+    function setSessionStatus(values){
+        const S = getLocalSession();
+        Object.entries(values).forEach(([k,v])=>{
+            if(!v && S[k] !== undefined){
+                delete S[k];
+            } else if(v){
+                S[k] = v;
+            }
+        });
+        setLocalSession(S);
+        return S;
+    }
+
+    async function api(GET = {}, PUT = null, service='store', token=null){
+        if(!token) token = TOKEN;
+        if(!token){
+            killSession();
+            throw { key:ERRORS.BAD_CREDENTIALS, message: "Invalid Credentials", source: 'sendSession' };
         }
-		return fetch(
-			`${BACKEND_ORIGIN}/wp-json/external_session/v1/store/${location.hostname}?${profile?'profile':'check'}=1`,
-			{headers: {
-				'Authorization': currentToken,
-				'Content-Type': 'application/json'
-			}}
-		)
-        .then(async r => {
-            const ok = r.status == 200;
-            if(!ok) {
-                await setSession({});
+
+        const qs = (qs => qs.length ? '?' + qs : '')(new URLSearchParams(GET).toString());
+        return fetch(
+            BACKEND_ORIGIN + `/wp-json/external_session/v1/${service}/` + location.hostname + (qs), {
+                method: PUT ? 'PUT' : 'GET',
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'application/json'
+                },
+                ...(PUT ? {body:JSON.stringify(PUT)} : {}),
+            }
+        )
+        .then(async r => ({data: await r.json(), status: r.status}))
+        .then(r => {
+            if(r.status == 403) {
+                killSession();
+                throw { key:ERRORS.BAD_CREDENTIALS, message: "Invalid Credentials", source: 'sendSession' };
+            }
+            if(r.status != 200){
+                throw { key: ERRORS.BAD_SERVER, message: "Operation Failed", source: {r, GET, PUT, service, token} };
+            }
+            return r;
+        });
+    }
+
+    async function apiInit(){
+        const initToken = await (async () => {
+            let rt = new URLSearchParams(window.location.search).get('auth');
+            if(rt) {
+                var url = new URL(window.location.href);
+                url.searchParams.delete('auth');
+                history.pushState(null, null, url.toString());    
+            } else {
+                rt = await openIframeAndWaitForMessage(`${BACKEND_ORIGIN}/external_session/autologin?site=${location.hostname}`).catch(e=>null);
+            }
+            return rt;
+        })();
+
+        if(!initToken) return false;
+
+        return api({}, null, 'init', initToken)
+            .then(({data:{token}}) => {
+                setSessionStatus({uid:true});
+                TOKEN = token;
+                return true;
+            });
+    }
+
+    async function killSession(){
+        setLocalSession({});
+        TOKEN = null;
+        renderSessionBar();
+    }
+    
+    async function sendSession(){
+        const session = getLocalSession();
+        return api({}, session.data || {}).then(r => session);
+    }
+
+    async function fetchSession(){
+        return api().then(({data}) => {
+            const session = {...getLocalSession(), data};
+            localStorage.setItem(BACKEND_HOST, JSON.stringify(session));
+            return session;
+        });
+    }
+
+    async function fetchProfile(){
+        return api({profile:1}).then(
+            ({data}) => setSessionStatus({profile:data}).profile
+        );
+    }
+
+    async function fetchStatus(){
+        return api({check:1}).then(
+            r => setSessionStatus({uid:true}).uid
+        ).catch(e => {
+            if(e.key == ERRORS.BAD_CREDENTIALS){
                 return false;
             }
-            
-            const session = await getSession();
-            if(!session.uid) return false;
-
-            if(profile){
-                return r.json().then(async profileData => {
-                    localStorage.setItem(BACKEND_HOST, JSON.stringify({
-                        ...session, profile:profileData
-                    }));
-                    return profileData;
-                });
-            }else if(!session.profile){
-                return !!isSessionActive(true);
-            }else{
-                return true;
-            }
-        })
-        .then(renderSessionBar);
+            throw e;
+        });
     }
+
+    async function getSessionData(){
+        return getLocalSession().data;
+    }
+
+    async function updateSessionData(data){
+        setSessionStatus({data});
+        return sendSession();
+    }
+
 
     (link => {
         link.rel = 'stylesheet';
@@ -154,53 +176,58 @@
 
     renderSessionBar();
     
-    const initToken = await (async () => {
-        let rt = new URLSearchParams(window.location.search).get('auth');
-        if(!rt) rt = await openIframeAndWaitForMessage(`${BACKEND_ORIGIN}/external_session/autologin?site=${location.hostname}`).catch(e=>null);
-        return rt;
-    })();
-    
-    if(initToken){
-        var url = new URL(window.location.href);
-        url.searchParams.delete('auth');
-        history.pushState(null, null, url.toString());
-		await fetch(
-			`${BACKEND_ORIGIN}/wp-json/external_session/v1/init/${location.hostname}`,
-			{headers: {
-				'Authorization': initToken,
-				'Content-Type': 'application/json'
-			}}
-		)
-        .then(r=>r.json())
-        .then(d => {
-            TOKEN = d.token;
-            setSession({uid: true})
-        });
-    }
-    isSessionActive();
+    apiInit()
+        .then(fetchStatus)
+        .then(ok => !ok && (()=>{ throw null; })())
+        .then(()=>Promise.all([
+            fetchProfile(), 
+            fetchSession()
+        ]))
+        .catch(e => {
+            if(e) {
+                console.log('ERROR:', e);
+                alert(JSON.stringify(e));
+            }
+        }).finally(renderSessionBar);
 
+    /*
+        TODO:
+        1. We are not rending the session bar at any point.
+        2. 
+     */
     window.AUTH = {
-        getToken,
-        isSessionActive,
-        getSession,
-        setSession
+        renderSessionBar,
+        getLocalSession,
+        setLocalSession,
+        setSessionStatus,
+        api,
+        apiInit,
+        sendSession,
+        fetchSession,
+        fetchProfile,
+        fetchStatus,
+        killSession,
+        DATA: {
+            get: getSessionData,
+            set: updateSessionData
+        }
     };
 })();
 
 
 function openIframeAndWaitForMessage(url) {
     return new Promise((resolve, reject) => {
-      // Create the iframe element
-      const iframe = document.createElement('iframe');
-      iframe.src = url;
-      iframe.id = 'myIframe';
-      iframe.style.display = 'none'; // Hide the iframe
-  
-      // Append the iframe to the document body
-      document.body.appendChild(iframe);
-  
-      // Function to handle the message event
-      const messageHandler = (event) => {
+        // Create the iframe element
+        const iframe = document.createElement('iframe');
+        iframe.src = url;
+        iframe.id = 'myIframe';
+        iframe.style.display = 'none'; // Hide the iframe
+    
+        // Append the iframe to the document body
+        document.body.appendChild(iframe);
+    
+        // Function to handle the message event
+        const messageHandler = (event) => {
         if (event.source !== iframe.contentWindow) {
             return;
         }  
@@ -211,31 +238,31 @@ function openIframeAndWaitForMessage(url) {
             reject(false);
         }
 
-  
+    
         // Remove the iframe
         document.body.removeChild(iframe);
-  
+    
         // Remove the message event listener
         window.removeEventListener('message', messageHandler);
-      };
-  
-      // Add the message event listener
-      window.addEventListener('message', messageHandler);
-  
-      // Set a timeout to remove the iframe after 5 seconds
-      setTimeout(() => {
+        };
+    
+        // Add the message event listener
+        window.addEventListener('message', messageHandler);
+    
+        // Set a timeout to remove the iframe after 5 seconds
+        setTimeout(() => {
         // Reject the promise if it hasn't been resolved yet
         reject(false);
-  
+    
         // Remove the iframe
         try{
             document.body.removeChild(iframe);
         }catch(e){}
-  
+    
         try{
             // Remove the message event listener
             window.removeEventListener('message', messageHandler);
         }catch(e){}
-      }, 5000);
+        }, 5000);
     });
 }
