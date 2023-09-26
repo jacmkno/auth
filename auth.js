@@ -29,13 +29,25 @@
                 including a map from the session domain to target website.
             */
             C.className = 'auth';
-            C.innerHTML = `<div class="auth">${
-                session.profile
+
+            ((N)=>{
+                // Auth Options
+                N.className = 'auth';
+                N.innerHTML = session.profile
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> | <a href="${window.AUTH_BACKEND}/customer-logout?site=${location.hostname}">Logout</a>`
-                    : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`
-            }</div>`;
-    
-            document.body.appendChild(C);
+                    : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
+                document.body.appendChild(C);
+            })(C.querySelector(':scope > div.auth') || document.createElement('div'))
+            
+
+            const _r = window.AUTH_SETTINGS.render;
+            if(_r) ((N)=>{
+                N.className = 'authcli';
+                C.appendChild(N);
+                const html = _r(session, N);
+                if(html) N.innerHTML = html;
+            })(C.querySelector('div.authcli') || document.createElement('div'));
+
         })(document.querySelector('nav.auth') || document.createElement('nav'));
         return passOnValue;    
     }
