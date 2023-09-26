@@ -18,8 +18,8 @@
     
     let TOKEN = null;
     
-    const BACKEND_ORIGIN = new URL(window.AUTH_BACKEND).origin;
-    const BACKEND_HOST = new URL(window.AUTH_BACKEND).hostname;
+    const BACKEND_ORIGIN = new URL(window.AUTH_SETTINGS.backend).origin;
+    const BACKEND_HOST = new URL(window.AUTH_SETTINGS.backend).hostname;
 
     function renderSessionBar(passOnValue){
         const session = getLocalSession();
@@ -31,8 +31,8 @@
             C.className = 'auth';
             C.innerHTML = `<div class="auth">${
                 session.profile
-                    ? `<a href="${window.AUTH_BACKEND}?site=${location.hostname}">${session.profile.display_name}</a> | <a href="${window.AUTH_BACKEND}/customer-logout?site=${location.hostname}">Logout</a>`
-                    : `<a href="${window.AUTH_BACKEND}?site=${location.hostname}">Login / Register</a>`
+                    ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> | <a href="${window.AUTH_BACKEND}/customer-logout?site=${location.hostname}">Logout</a>`
+                    : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`
             }</div>`;
     
             document.body.appendChild(C);
