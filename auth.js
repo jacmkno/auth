@@ -36,7 +36,7 @@
                 N.innerHTML = session.profile
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> | <a href="${window.AUTH_BACKEND}/customer-logout?site=${location.hostname}">Logout</a>`
                     : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
-                document.body.appendChild(C);
+                C.appendChild(N);
             })(C.querySelector(':scope > div.auth') || document.createElement('div'))
             
 
@@ -48,6 +48,7 @@
                 if(html) N.innerHTML = html;
             })(C.querySelector('div.authcli') || document.createElement('div'));
 
+            document.body.appendChild(C);
         })(document.querySelector('nav.auth') || document.createElement('nav'));
         return passOnValue;    
     }
