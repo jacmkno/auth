@@ -44,7 +44,7 @@
             if(_r) ((N)=>{
                 N.className = 'authcli';
                 C.appendChild(N);
-                const html = _r(data, profile, N);
+                const html = _r(session, N);
                 if(html) N.innerHTML = html;
             })(C.querySelector('div.authcli') || document.createElement('div'));
 
