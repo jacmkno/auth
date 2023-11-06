@@ -222,7 +222,7 @@
             const close = e => {
                 e.stopPropagation();
                 document.body.
-                w.parentNode.removeChild(w);
+                if(w.parentNode) w.parentNode.removeChild(w);
                 document.body.removeEventListener(close);
             }
             w.querySelector('button[close]').addEventListener('click', close);
