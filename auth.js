@@ -42,7 +42,7 @@
                        }
                        `
                     : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
-                N.querySelector('A[bttools]').addEventListener('click', window.AUTH.showTools);
+                N.querySelector('A[bttools]').addEventListener('click', ()=>window.AUTH.showTools());
                 C.appendChild(N);
             })(C.querySelector(':scope > div.auth') || document.createElement('div'))
             
@@ -227,6 +227,7 @@
             }
             w.querySelector('button[close]').addEventListener('click', close);
             document.body.addEventListener('click', close);
+            document.body.appendChild(w);
             return w;
         })(document.createElement('div')));
     }
