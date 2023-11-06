@@ -37,11 +37,12 @@
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> 
                        | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
                        ${ window.AUTH_SETTINGS.renderTools 
-                         ? `| <a href="window.AUTH.showTools()">Tools</a>`
+                         ? `| <a bttools>Tools</a>`
                          : ''
                        }
                        `
                     : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
+                N.querySelector('A[bttools]').addEventListener('click', window.AUTH.showTools);
                 C.appendChild(N);
             })(C.querySelector(':scope > div.auth') || document.createElement('div'))
             
@@ -211,22 +212,23 @@
         }).finally(renderSessionBar);
 
     function showTools(){
-      document.body.appendChild((w=>{
-        w.addClass('auth-tools-wrap');
-        w.innerHTML = `
-          <div class="auth-tools">${ window.AUTH_SETTINGS.renderTools(session, w) }</div>
-          <button close tx-icon>close</button>
-        `;
-        const close = e => {
-          e.stopPropagation();
-          document.body.
-          w.parentNode.removeChild(w);
-          document.body.removeEventListener(close);
-        }
-        w.querySelectos('button[close]').addEventListener('click', close);
-        document.body.addEventListener('click', close);
-        return w;
-      })(document.createElement('div')))
+        const session = getLocalSession();
+        document.body.appendChild((w=>{
+            w.addClass('auth-tools-wrap');
+            w.innerHTML = `
+                <div class="auth-tools">${ window.AUTH_SETTINGS.renderTools(session, w) }</div>
+                <button close tx-icon>close</button>
+            `;
+            const close = e => {
+                e.stopPropagation();
+                document.body.
+                w.parentNode.removeChild(w);
+                document.body.removeEventListener(close);
+            }
+            w.querySelector('button[close]').addEventListener('click', close);
+            document.body.addEventListener('click', close);
+            return w;
+        })(document.createElement('div')));
     }
   
     window.AUTH = {
@@ -241,6 +243,7 @@
         fetchProfile,
         fetchStatus,
         killSession,
+        showTools,
         DATA: {
             get: getSessionData,
             set: updateSessionData
