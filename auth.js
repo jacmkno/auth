@@ -35,12 +35,12 @@
                 N.className = 'auth';
                 N.innerHTML = session.profile
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> 
-                       | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
-                       ${ window.AUTH_SETTINGS.renderTools 
-                         ? `| <a bttools>Tools</a>`
-                         : ''
-                       }
-                       `
+                        | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
+                        ${ window.AUTH_SETTINGS.renderTools 
+                            ? `| <a bttools>Tools</a>`
+                            : ''
+                        }
+                        `
                     : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
                 N.querySelector('A[bttools]').addEventListener('click', ()=>window.AUTH.showTools());
                 C.appendChild(N);
@@ -221,17 +221,18 @@
             `;
             const close = e => {
                 e.stopPropagation();
-                document.body.
                 if(w.parentNode) w.parentNode.removeChild(w);
-                document.body.removeEventListener(close);
+                document.body.removeEventListener('click', close);
             }
-            w.querySelector('button[close]').addEventListener('click', close);
-            document.body.addEventListener('click', close);
-            document.body.appendChild(w);
+            setTimeout(()=>{
+                w.querySelector('button[close]').addEventListener('click', close);
+                document.body.appendChild(w);
+                document.body.addEventListener('click', close);                
+            }, 50);
             return w;
         })(document.createElement('div')));
     }
-  
+    
     window.AUTH = {
         renderSessionBar,
         getLocalSession,
