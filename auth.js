@@ -34,13 +34,19 @@
                 // Auth Options
                 N.className = 'auth';
                 N.innerHTML = session.profile
-                    ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>`
+                    ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> 
+                       | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
+                       ${ window.AUTH_SETTINGS.renderTools 
+                         ? `| <a href="window.AUTH.showTools()">Tools</a>`
+                         : ''
+                       }
+                       `
                     : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
                 C.appendChild(N);
             })(C.querySelector(':scope > div.auth') || document.createElement('div'))
             
 
-            const _r = window.AUTH_SETTINGS.render;
+            const _r = window.AUTH_SETTINGS.renderTopMenu;
             if(_r) ((N)=>{
                 N.className = 'authcli';
                 C.appendChild(N);
@@ -204,11 +210,25 @@
             }
         }).finally(renderSessionBar);
 
-    /*
-        TODO:
-        1. We are not rending the session bar at any point.
-        2. 
-     */
+    function showTools(){
+      document.body.appendChild((w=>{
+        w.addClass('auth-tools-wrap');
+        w.innerHTML = `
+          <div class="auth-tools">${ window.AUTH_SETTINGS.renderTools(session, w) }</div>
+          <button close tx-icon>close</button>
+        `;
+        const close = e => {
+          e.stopPropagation();
+          document.body.
+          w.parentNode.removeChild(w);
+          document.body.removeEventListener(close);
+        }
+        w.querySelectos('button[close]').addEventListener('click', close);
+        document.body..addEventListener('click', close);
+        return w;
+      })(document.createElement('div')))
+    }
+  
     window.AUTH = {
         renderSessionBar,
         getLocalSession,
