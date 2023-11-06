@@ -214,7 +214,7 @@
     function showTools(){
         const session = getLocalSession();
         document.body.appendChild((w=>{
-            w.addClass('auth-tools-wrap');
+            w.classList.add('auth-tools-wrap');
             w.innerHTML = `
                 <div class="auth-tools">${ window.AUTH_SETTINGS.renderTools(session, w) }</div>
                 <button close tx-icon>close</button>
