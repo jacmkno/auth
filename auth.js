@@ -224,7 +224,7 @@
           document.body.removeEventListener(close);
         }
         w.querySelectos('button[close]').addEventListener('click', close);
-        document.body..addEventListener('click', close);
+        document.body.addEventListener('click', close);
         return w;
       })(document.createElement('div')))
     }
