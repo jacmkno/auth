@@ -19,3 +19,16 @@ nav.auth {
   box-shadow: 0 0 5px;
   z-index: 999;
 }
+
+.auth button {
+    background-color: #0d6efd;
+    color: white;
+    padding: 0.1em 0.6em;
+    border: 0;
+    border-radius: 0.3em;
+    cursor: pointer;
+}
+
+.auth button:hover {
+    background-color: #0b5ed7;
+}
