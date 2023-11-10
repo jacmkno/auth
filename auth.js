@@ -216,9 +216,12 @@
         document.body.appendChild((w=>{
             w.classList.add('auth-tools-wrap');
             w.innerHTML = `
-                <div class="auth-tools">${ window.AUTH_SETTINGS.renderTools(session, w) }</div>
+                <div class="auth-tools"></div>
                 <button close tx-icon>close</button>
             `;
+            const at = w.querySelector('auth-tools');
+            const rt = window.AUTH_SETTINGS.renderTools(session, at);
+            if(rt) at.innerHTML = rt;
             const close = e => {
                 e.stopPropagation();
                 if(w.parentNode) w.parentNode.removeChild(w);
