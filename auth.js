@@ -37,12 +37,15 @@
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> 
                         | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
                         ${ window.AUTH_SETTINGS.renderTools 
-                            ? `| <a bttools>Tools</a>`
+                            ? `| <a bttools href>Tools</a>`
                             : ''
                         }
                         `
                     : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
-                N.querySelector('A[bttools]').addEventListener('click', ()=>window.AUTH.showTools());
+                N.querySelector('A[bttools]').addEventListener('click', e => {
+                  e.preventDefault();
+                  window.AUTH.showTools();
+                });
                 C.appendChild(N);
             })(C.querySelector(':scope > div.auth') || document.createElement('div'))
             
