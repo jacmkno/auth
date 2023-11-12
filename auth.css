@@ -9,15 +9,15 @@ nav.auth {
 }
 
 .auth-tools-wrap {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  translate: -50% -50%;
-  box-shadow: 0 0 5px;
-  z-index: 999;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    background: white;
+    padding: 20px;
+    border-radius: 20px;
+    translate: -50% -50%;
+    box-shadow: 0 0 5px;
+    z-index: 1000;
 }
 
 .auth button {
@@ -27,8 +27,22 @@ nav.auth {
     border: 0;
     border-radius: 0.3em;
     cursor: pointer;
+    margin: 0.2em 0.18em;
 }
 
 .auth button:hover {
     background-color: #0b5ed7;
+}
+
+
+BODY.auth-back:after {
+    content: '';
+    display: block;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    background: #18181885;
 }
