@@ -42,10 +42,12 @@
                         }
                         `
                     : `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">Login / Register</a>`;
-                N.querySelector('A[bttools]').addEventListener('click', e => {
-                  e.preventDefault();
-                  window.AUTH.showTools();
-                });
+                if(session.profile){
+                    N.querySelector('A[bttools]').addEventListener('click', e => {
+                      e.preventDefault();
+                      window.AUTH.showTools();
+                    });
+                }
                 C.appendChild(N);
             })(C.querySelector(':scope > div.auth') || document.createElement('div'))
             
@@ -229,12 +231,15 @@
                 e.stopPropagation();
                 if(w.parentNode) w.parentNode.removeChild(w);
                 document.body.removeEventListener('click', close);
+                document.body.classList.remove('auth-back');
             }
             setTimeout(()=>{
                 w.querySelector('button[close]').addEventListener('click', close);
                 document.body.appendChild(w);
-                document.body.addEventListener('click', close);                
+                document.body.addEventListener('click', close);
+                w.addEventListener('click', e=>e.stopPropagation());
             }, 50);
+            document.body.classList.add('auth-back');
             return w;
         })(document.createElement('div')));
     }
