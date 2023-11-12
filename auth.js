@@ -222,7 +222,7 @@
                 <div class="auth-tools"></div>
                 <button close tx-icon>close</button>
             `;
-            const at = w.querySelector('auth-tools');
+            const at = w.querySelector('.auth-tools');
             const rt = window.AUTH_SETTINGS.renderTools(session, at);
             if(rt) at.innerHTML = rt;
             const close = e => {
