@@ -9,15 +9,17 @@ nav.auth {
 }
 
 .auth-tools-wrap {
-    position: absolute;
+    position: fixed;
     left: 50%;
     top: 50%;
     background: white;
     padding: 20px;
-    border-radius: 20px;
+    border-radius: 10px;
     translate: -50% -50%;
     box-shadow: 0 0 5px;
     z-index: 1000;
+    width: min(calc(100vw - max(24px, 10vw)), 800px);
+    height: calc(100vh - max(24px, 10vh));
 }
 
 .auth button {
@@ -45,4 +47,20 @@ BODY.auth-back:after {
     bottom: 0;
     z-index: 999;
     background: #18181885;
+}
+
+.auth button[tx-icon][close] {
+    position: absolute;
+    right: -11px;
+    top: -11px;
+    border-radius: 50%;
+}
+
+.auth-tools-wrap > h1 {
+    font-size: 140%;
+    border-bottom: Solid 1px #dedede;
+    margin: -13px -20px 0 -20px;
+    padding: 0 10px 6px;
+    text-align: center;
+    margin-bottom: 10px;
 }
