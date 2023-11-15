@@ -221,8 +221,9 @@
         document.body.appendChild((w=>{
             w.className = 'auth-tools-wrap auth';
             w.innerHTML = `
+                <h1>Tool Window</h1>
                 <div class="auth-tools"></div>
-                <button close tx-icon>close</button>
+                <button close tx-icon>✖</button>
             `;
             const at = w.querySelector('.auth-tools');
             const rt = window.AUTH_SETTINGS.renderTools(session, at);
