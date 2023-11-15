@@ -37,7 +37,7 @@
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> 
                         | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
                         ${ window.AUTH_SETTINGS.renderTools 
-                            ? `| <a bttools href>Tools</a>`
+                            ? `| <a bttools href>${window.AUTH_SETTINGS?.tools?.label||'Tools'}</a>`
                             : ''
                         }
                         `
@@ -221,7 +221,7 @@
         document.body.appendChild((w=>{
             w.className = 'auth-tools-wrap auth';
             w.innerHTML = `
-                <h1>Tool Window</h1>
+                <h1>${window.AUTH_SETTINGS?.tools?.title||'Site Tools'}</h1>
                 <div class="auth-tools"></div>
                 <button close tx-icon>✖</button>
             `;
