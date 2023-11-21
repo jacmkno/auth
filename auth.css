@@ -65,3 +65,7 @@ BODY.auth-back:after {
     text-align: center;
     margin-bottom: 10px;
 }
+
+.auth-tools {
+    word-break: break-all;
+}
