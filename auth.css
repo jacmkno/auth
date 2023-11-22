@@ -18,7 +18,7 @@ nav.auth {
     translate: -50% -50%;
     box-shadow: 0 0 5px;
     z-index: 1000;
-    width: min(calc(100vw - max(24px, 10vw)), 800px);
+    width: min(calc(100vw - max(24px, 10vw)), 1100px);
     height: calc(100vh - max(24px, 10vh));
 }
 
