@@ -20,6 +20,20 @@
     
     const BACKEND_ORIGIN = new URL(window.AUTH_SETTINGS.backend).origin;
     const BACKEND_HOST = new URL(window.AUTH_SETTINGS.backend).hostname;
+    window.AUTH_SETTINGS.tabs ||= {
+        tools: {label: 'Tools', title: 'Tools'}
+    };
+
+    window.AUTH_SETTINGS.activeTab ||= Object.keys(window.AUTH_SETTINGS.tabs).shift();
+
+    function activeTab(value=null){
+        if(value) window.AUTH_SETTINGS.activeTab = value;
+        const key = window.AUTH_SETTINGS.activeTab;
+        return {
+            key,
+            ...window.AUTH_SETTINGS.tabs[key]
+        };
+    }
 
     function renderSessionBar(passOnValue){
         const session = getLocalSession();
@@ -37,7 +51,7 @@
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> 
                         | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
                         ${ window.AUTH_SETTINGS.renderTools 
-                            ? `| <a bttools href>${window.AUTH_SETTINGS?.tools?.label||'Tools'}</a>`
+                            ? `| <a bttools>${activeTab().label}</a>`
                             : ''
                         }
                         `
@@ -221,12 +235,26 @@
         document.body.appendChild((w=>{
             w.className = 'auth-tools-wrap auth';
             w.innerHTML = `
-                <h1>${window.AUTH_SETTINGS?.tools?.title||'Site Tools'}</h1>
+                <h1>${activeTab().title}</h1>
+                <nav class="auth-tabs">
+                    ${ Object.entries(window.AUTH_SETTINGS.tabs)
+                       .map(
+                           ([key, {label, title}]) => 
+                               `<a key="${key}" ${(activeTab().key == key)?'active':''}>${label}</a>`
+                       ).join('')}
+                </nav>
                 <div class="auth-tools"></div>
                 <button close tx-icon>✖</button>
             `;
+            w.querySelector('.auth-tabs').addEventListener('click',e=>{
+              const key = e.target.getAttribute('key');
+              if(key) {
+                activeTab(key);
+                showTools();
+              }
+            });
             const at = w.querySelector('.auth-tools');
-            const rt = window.AUTH_SETTINGS.renderTools(session, at);
+            const rt = window.AUTH_SETTINGS.renderTools(session, at, activeTab() );
             if(rt) at.innerHTML = rt;
             const close = e => {
                 e.stopPropagation();
