@@ -230,10 +230,24 @@
             }
         }).finally(renderSessionBar);
 
+    function closeToools(e){
+        const w = document.querySelector('.auth-tools-wrap');
+        if(!w) return;
+        e.stopPropagation();
+        if(w.parentNode) w.parentNode.removeChild(w);
+        document.body.removeEventListener('click', closeToools);
+        document.body.classList.remove('auth-back');
+    }
+
+    function getToolsNode(){
+        const rt = document.querySelector('.auth-tools-wrap') || document.createElement('div');
+        rt.className = 'auth-tools-wrap auth';
+        return rt;
+    }
+
     function showTools(){
         const session = getLocalSession();
         document.body.appendChild((w=>{
-            w.className = 'auth-tools-wrap auth';
             w.innerHTML = `
                 <h1>${activeTab().title}</h1>
                 <nav class="auth-tabs">
@@ -256,21 +270,16 @@
             const at = w.querySelector('.auth-tools');
             const rt = window.AUTH_SETTINGS.renderTools(session, at, activeTab() );
             if(rt) at.innerHTML = rt;
-            const close = e => {
-                e.stopPropagation();
-                if(w.parentNode) w.parentNode.removeChild(w);
-                document.body.removeEventListener('click', close);
-                document.body.classList.remove('auth-back');
-            }
             setTimeout(()=>{
-                w.querySelector('button[close]').addEventListener('click', close);
+                w.querySelector('button[close]').addEventListener('click', closeToools);
                 document.body.appendChild(w);
-                document.body.addEventListener('click', close);
+                document.body.removeEventListener('click', closeToools);
+                document.body.addEventListener('click', closeToools);
                 w.addEventListener('click', e=>e.stopPropagation());
             }, 50);
             document.body.classList.add('auth-back');
             return w;
-        })(document.createElement('div')));
+        })(getToolsNode()));
     }
     
     window.AUTH = {
