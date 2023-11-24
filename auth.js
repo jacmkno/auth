@@ -46,12 +46,12 @@
 
             ((N)=>{
                 // Auth Options
-                N.className = 'auth';
+                N.className = 'auth' + (session.profile?' logged-in':'');
                 N.innerHTML = session.profile
                     ? `<a href="${window.AUTH_SETTINGS.backend}?site=${location.hostname}">${session.profile.display_name}</a> 
-                        | <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
+                       <a href="${window.AUTH_SETTINGS.backend}/customer-logout?site=${location.hostname}">Logout</a>
                         ${ window.AUTH_SETTINGS.renderTools 
-                            ? `| <a bttools>${activeTab().label}</a>`
+                            ? `<a bttools>${activeTab().label}</a>`
                             : ''
                         }
                         `
@@ -65,8 +65,9 @@
                 C.appendChild(N);
             })(C.querySelector(':scope > div.auth') || document.createElement('div'))
             
+            document.body.appendChild(C);
 
-            const _r = window.AUTH_SETTINGS.renderTopMenu;
+            const _r = (...args)=>window.AUTH_SETTINGS.renderTopMenu(...args);
             if(_r) ((N)=>{
                 N.className = 'authcli';
                 C.appendChild(N);
@@ -74,7 +75,6 @@
                 if(html) N.innerHTML = html;
             })(C.querySelector('div.authcli') || document.createElement('div'));
 
-            document.body.appendChild(C);
         })(document.querySelector('nav.auth') || document.createElement('nav'));
         return passOnValue;    
     }
