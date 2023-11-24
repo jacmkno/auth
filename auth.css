@@ -168,3 +168,84 @@ BODY.auth-back:after {
       background: #c7daf0;
   }  
 }
+
+
+/*Client. TODO: Move to Client!!! This is just demo here!! */
+.cntr a:hover {
+    background: #e9e9e9;
+}
+
+.searchbox nav.auth {
+    position: static;
+    border:0;
+    padding: 0;
+}
+
+.searchbox nav.auth {
+    position: static;
+    border:0;
+    padding: 0;
+}
+
+.searchbox div.auth[class] a, .cntr nav.auth[class] a {
+  padding: 8px 15px 8px;
+  background: #980000;
+  color: white;
+  display: block;
+  white-space:nowrap
+}
+.cntr nav.auth[class] a {margin: 3px;line-height: 100%;}
+
+.searchbox .rblk:first-child {
+    margin-right: 0;
+}
+
+.searchbox {
+    gap: 5px;
+}
+
+.cntr[class] a {
+  align-items: center; /* Vertically centers the content */
+  display:flex;
+}
+
+.cntr a:hover {
+    background: #e9e9e9;
+}
+
+.cntr.cntr a > span{margin-top:0;}
+
+
+@media(max-width: 780px){
+    .cntr nav.auth {position: static;border: 0;padding: 0;background: #b3b3b3;}
+    .cntr .auth, .cntr .auth[class][class] a {display:flex;}
+    .cntr nav.auth {
+      justify-content: center;
+      flex: 1;
+    }
+    .cntr .authcli {display:none;}
+    .cntr[class] a {
+        padding: 0.2em;
+    }
+    .cntr {
+        display: flex;
+        padding: 0;
+        flex-wrap: wrap;
+        align-content: unset;
+    }
+    .cntr > a {
+        flex: 2;
+        min-width: 200px;
+        justify-content: center;
+    }
+}
+
+@media(min-width: 781px){
+    .searchbox nav.auth {
+      position: relative;border: 0;padding: 0;background: #b3b3b3;
+      height:40px; overflow: hidden;
+    }
+    .searchbox nav.auth:hover {
+      overflow:visible;
+    }
+}
