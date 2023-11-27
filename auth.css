@@ -217,7 +217,7 @@ BODY.auth-back:after {
 
 
 @media(max-width: 780px){
-    .cntr nav.auth {position: static;border: 0;padding: 0;background: #b3b3b3;}
+    .cntr nav.auth {position: static;border: 0;padding: 0;background: #f9f5ef;}
     .cntr .auth, .cntr .auth[class][class] a {display:flex;}
     .cntr nav.auth {
       justify-content: center;
