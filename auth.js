@@ -298,6 +298,7 @@
         sendSession,
         fetchSession,
         fetchProfile,
+        fetchProducts,
         fetchStatus,
         killSession,
         showTools,
