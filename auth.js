@@ -183,6 +183,12 @@
         );
     }
 
+    async function fetchProducts(){
+        return api({products:1}).then(
+            ({data}) => setSessionStatus({products:data}).products
+        );
+    }
+
     async function fetchStatus(){
         return api({check:1}).then(
             r => setSessionStatus({uid:true}).uid
