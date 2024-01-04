@@ -230,7 +230,7 @@
             fetchSession()
         ]))
         .catch(e => {
-            if(e) {
+            if(e && Object.keys(e).length) {
                 console.log('ERROR:', e);
                 alert(JSON.stringify(e));
             }
