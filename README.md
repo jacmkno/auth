@@ -10,27 +10,20 @@ A JavaScript library to let a compatible Single Sign On Service manage your site
 - API communication with the backend server
 - Integration with user interface components
 
-## Usage
-
-### Initialization
-
-Simply include the `auth.js` script in your HTML file after defining your auth settings:
-
-```html
-<script>
-    // Your authetication settings
-</script>
-<script src="/auth.js"></script>
-```
+## Configuration and Usage
+To use auth.js effectively, you need to provide specific authentication settings. These settings should be defined in a configuration script that initializes necessary parameters for auth.js to function correctly. This configuration should be loaded before auth.js is included in your HTML file.
 
 ### Authentication Settings
+Set up the window.AUTH_SETTINGS object with the required settings before loading the auth.js script. This configuration object the includes the backend API URL and user session UI components.
 
-Set up the `window.AUTH_SETTINGS` object with the required settings before loading the script:
+
+### Example Configuration Structure
+Define the window.AUTH_SETTINGS object in your configuration script as follows:
 
 ```javascript
 <script>
 window.AUTH_SETTINGS = {
-    backend: 'https://your-backend-url.com/my-account/',
+    backend: 'https://your-backend.com/api-url/',
     tabs: {
         "dashboard": {
             label: 'Dashboard',
@@ -50,6 +43,20 @@ window.AUTH_SETTINGS = {
 };
 </script>
 ```
+
+### Initialization
+
+Simply include the `auth.js` script in your HTML file after defining your auth settings:
+
+```html
+<script>
+    // Your authetication settings or settings file.
+</script>
+<script src="/auth.js"></script>
+```
+
+Ensure your configuration settings are loaded before auth.js. Define your settings in a script tag or a separate configuration file.
+
 
 ## The Session Object
 
