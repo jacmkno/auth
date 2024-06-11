@@ -128,3 +128,50 @@ The session tools are handled as tabs with a `label` for the tab button and a `t
     }
 }
 ```
+
+# Backend API Documentation
+
+This document outlines the backend requirements for a SSO service to be compatible with `auth.js`.
+
+## Endpoints
+
+### 1. /external_session/autologin (GET)
+- **Description**: Retrieves a session initialization token if the user is logged in or false other wise.
+- **CORS**: Allows third party sites to load as IFRAME and allows same site cookie headers
+- **Request**:
+  - Method: GET
+  - Parameters: site (current site hostname)
+- **Response (if logged in)**:
+  - Body: HTML with javascript that does a postMessage to the parent window with the initialization token as data.
+- **Response (if logged out)**:
+  - Body: HTML with javascript that does a postMessage to the parent window with `false` adata.
+
+### 2. /external_session/v1/store (GET, PUT)
+- **Description**: Manages session data storage and retrieval.
+- **Request**:
+  - Method: GET or PUT
+  - Headers: Authorization token
+  - Body (PUT only): JSON containing session data to be stored.
+  - **GET Parameters**:
+    - `profile=1`: Fetches user profile information.
+    - `products=1`: Fetches product information (deprecated).
+    - `check=1`: Checks session status.
+    - Otherwise: Gets the session data (without PUT).
+  - **PUT Data**:
+      Without profile/products/check GET params, stores the data in the session.
+- **Response GET**:
+  According to GET params, JSON with the requested data.
+- **Response PUT**:
+  The session data in JSON.
+- **Response Status**:
+    - Invalid credentials: 403
+
+### 3. /external_session/v1/init/{site-domain} (GET, PUT)
+- **Description**: Exchanges an initialization token for an actual session token.
+- **Request**:
+  - Method: GET
+  - Headers: Authorization token
+- **Response JSON**: `{"token": "Session token"}`
+- **Response Status**:
+    - Invalid credentials: 403
+
