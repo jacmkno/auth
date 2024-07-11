@@ -194,6 +194,11 @@ BODY.auth-back:after {
   display: block;
   white-space:nowrap
 }
+
+.searchbox div.auth[class] A:hover {
+    background: #c06b6b;
+}
+
 .cntr nav.auth[class] a {margin: 3px;line-height: 100%;}
 
 .searchbox .rblk:first-child {
